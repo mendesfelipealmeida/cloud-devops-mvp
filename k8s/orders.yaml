@@ -22,7 +22,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: orders
-          image: ghcr.io/SEU_USUARIO/pedidos-veloz-orders:1.0.0
+          image: ghcr.io/mendesfelipealmeida/pedidos-veloz-orders:1.0.0
           imagePullPolicy: IfNotPresent
           command: ["node", "src/services/orders/server.js"]
           ports:

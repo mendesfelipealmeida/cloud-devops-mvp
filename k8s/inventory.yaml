@@ -17,7 +17,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: inventory
-          image: ghcr.io/SEU_USUARIO/pedidos-veloz-inventory:1.0.0
+          image: ghcr.io/mendesfelipealmeida/pedidos-veloz-inventory:1.0.0
           imagePullPolicy: IfNotPresent
           command: ["node", "src/services/inventory/server.js"]
           ports:

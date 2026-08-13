@@ -68,7 +68,7 @@ Os manifests ficam em `k8s/`:
 kubectl apply -f k8s/
 ```
 
-Antes de usar em um registry real, substitua `ghcr.io/SEU_USUARIO/...` pelas imagens publicadas pelo pipeline.
+As imagens publicadas pelo pipeline usam o registry `ghcr.io/mendesfelipealmeida/...`.
 
 ## CI/CD
 

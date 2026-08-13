@@ -22,7 +22,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: api-gateway
-          image: ghcr.io/SEU_USUARIO/pedidos-veloz-api-gateway:1.0.0
+          image: ghcr.io/mendesfelipealmeida/pedidos-veloz-api-gateway:1.0.0
           imagePullPolicy: IfNotPresent
           command: ["node", "src/services/api-gateway/server.js"]
           ports:
