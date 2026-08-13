@@ -2,9 +2,9 @@ name: CI/CD Pedidos Veloz
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "master"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "master"]
 
 env:
   REGISTRY: ghcr.io
@@ -12,7 +12,7 @@ env:
 
 jobs:
   test:
-    name: Build and test
+    name: Build, lint and test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run lint
+        run: npm run lint
 
       - name: Run tests
         run: npm test
@@ -84,5 +87,15 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
 
-      - name: Apply manifests
-        run: kubectl apply -f k8s/
+      - name: Render manifests with commit images
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          cp -R k8s rendered-k8s
+          sed -i "s|ghcr.io/mendesfelipealmeida/pedidos-veloz-api-gateway:1.0.0|${IMAGE_PREFIX}-api-gateway:${GITHUB_SHA}|g" rendered-k8s/api-gateway.yaml
+          sed -i "s|ghcr.io/mendesfelipealmeida/pedidos-veloz-orders:1.0.0|${IMAGE_PREFIX}-orders:${GITHUB_SHA}|g" rendered-k8s/orders.yaml
+          sed -i "s|ghcr.io/mendesfelipealmeida/pedidos-veloz-payments:1.0.0|${IMAGE_PREFIX}-payments:${GITHUB_SHA}|g" rendered-k8s/payments.yaml
+          sed -i "s|ghcr.io/mendesfelipealmeida/pedidos-veloz-inventory:1.0.0|${IMAGE_PREFIX}-inventory:${GITHUB_SHA}|g" rendered-k8s/inventory.yaml
+
+      - name: Apply rendered manifests
+        run: kubectl apply -f rendered-k8s/

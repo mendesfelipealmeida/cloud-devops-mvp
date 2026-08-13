@@ -13,7 +13,7 @@ Mostrar o README e explicar os componentes:
 - Inventory Service para produtos e reserva de estoque.
 - Payments Service como simulacao de integracao externa.
 - PostgreSQL como banco.
-- Prometheus e Jaeger para observabilidade.
+- Prometheus para metricas e Jaeger/OpenTelemetry como proposta conceitual de tracing.
 
 ## 1:15 - 2:00 | Demonstracao local
 
@@ -66,7 +66,7 @@ Explicar o uso de secrets como `KUBE_CONFIG`.
 
 ## 3:20 - 3:50 | Observabilidade, escala e resiliencia
 
-Mostrar `/metrics` ou Prometheus. Explicar logs JSON com `requestId` e tracing distribuido com OpenTelemetry/Jaeger como evolucao instrumentada.
+Mostrar `/metrics` ou Prometheus. Explicar logs JSON com `requestId`. Deixar claro que metricas/logs estao implementados e que tracing distribuido esta planejado conceitualmente com OpenTelemetry/Jaeger.
 
 Explicar por que RollingUpdate e HPA foram escolhidos para reduzir risco e responder a picos de trafego.
 

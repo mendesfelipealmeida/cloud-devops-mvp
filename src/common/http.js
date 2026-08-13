@@ -73,7 +73,7 @@ function notFoundHandler(request, response) {
   });
 }
 
-function errorHandler(error, request, response, next) {
+function errorHandler(error, request, response, _next) {
   const statusCode = error.statusCode || 500;
   console.error(JSON.stringify({
     requestId: request.requestId,
