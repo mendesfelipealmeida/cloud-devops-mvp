@@ -1,0 +1,133 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pedidos-veloz-postgres
+    environment:
+      POSTGRES_USER: pedidos
+      POSTGRES_PASSWORD: pedidos
+      POSTGRES_DB: pedidos_veloz
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    networks:
+      - pedidos-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pedidos -d pedidos_veloz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inventory:
+    build:
+      context: .
+      target: runtime
+    container_name: pedidos-veloz-inventory
+    command: ["node", "src/services/inventory/server.js"]
+    environment:
+      INVENTORY_PORT: 3003
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: pedidos
+      POSTGRES_PASSWORD: pedidos
+      POSTGRES_DB: pedidos_veloz
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3003:3003"
+    networks:
+      - pedidos-net
+
+  payments:
+    build:
+      context: .
+      target: runtime
+    container_name: pedidos-veloz-payments
+    command: ["node", "src/services/payments/server.js"]
+    environment:
+      PAYMENTS_PORT: 3002
+      PAYMENT_APPROVAL_LIMIT: 5000
+    ports:
+      - "3002:3002"
+    networks:
+      - pedidos-net
+
+  orders:
+    build:
+      context: .
+      target: runtime
+    container_name: pedidos-veloz-orders
+    command: ["node", "src/services/orders/server.js"]
+    environment:
+      ORDERS_PORT: 3001
+      INVENTORY_SERVICE_URL: http://inventory:3003
+      PAYMENTS_SERVICE_URL: http://payments:3002
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: pedidos
+      POSTGRES_PASSWORD: pedidos
+      POSTGRES_DB: pedidos_veloz
+    depends_on:
+      postgres:
+        condition: service_healthy
+      inventory:
+        condition: service_started
+      payments:
+        condition: service_started
+    ports:
+      - "3001:3001"
+    networks:
+      - pedidos-net
+
+  api-gateway:
+    build:
+      context: .
+      target: runtime
+    container_name: pedidos-veloz-gateway
+    command: ["node", "src/services/api-gateway/server.js"]
+    environment:
+      GATEWAY_PORT: 3000
+      ORDERS_SERVICE_URL: http://orders:3001
+      PAYMENTS_SERVICE_URL: http://payments:3002
+      INVENTORY_SERVICE_URL: http://inventory:3003
+    depends_on:
+      - orders
+      - inventory
+      - payments
+    ports:
+      - "3000:3000"
+    networks:
+      - pedidos-net
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: pedidos-veloz-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api-gateway
+      - orders
+      - inventory
+      - payments
+    networks:
+      - pedidos-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    container_name: pedidos-veloz-jaeger
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    networks:
+      - pedidos-net
+
+networks:
+  pedidos-net:
+    driver: bridge
+
+volumes:
+  postgres-data:

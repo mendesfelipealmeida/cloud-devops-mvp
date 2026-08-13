@@ -1,0 +1,37 @@
+{
+  "name": "pedidos-veloz-platform",
+  "version": "1.0.0",
+  "description": "MVP cloud-native da plataforma Pedidos Veloz com microsservicos, Docker, Kubernetes, CI/CD e observabilidade.",
+  "main": "src/services/api-gateway/server.js",
+  "scripts": {
+    "start": "node src/services/api-gateway/server.js",
+    "start:gateway": "node src/services/api-gateway/server.js",
+    "start:orders": "node src/services/orders/server.js",
+    "start:payments": "node src/services/payments/server.js",
+    "start:inventory": "node src/services/inventory/server.js",
+    "dev:gateway": "nodemon src/services/api-gateway/server.js",
+    "dev:orders": "nodemon src/services/orders/server.js",
+    "dev:payments": "nodemon src/services/payments/server.js",
+    "dev:inventory": "nodemon src/services/inventory/server.js",
+    "test": "node --test --test-isolation=none tests/*.test.js"
+  },
+  "keywords": [
+    "devops",
+    "microservices",
+    "docker",
+    "kubernetes",
+    "postgresql",
+    "observability"
+  ],
+  "author": "Felipe Almeida",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
