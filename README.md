@@ -1,4 +1,4 @@
-# Pedidos Veloz - Cloud DevOps MVP
+﻿# Pedidos Veloz - Cloud DevOps MVP
 
 Plataforma de pedidos em microsservicos para o desafio de Cloud DevOps. O projeto demonstra ambiente local com Docker Compose, conteinerizacao, Kubernetes, CI/CD com lint e testes, observabilidade com metricas/logs e esqueleto de IaC com Terraform.
 
@@ -83,7 +83,7 @@ O workflow `.github/workflows/ci-cd.yml` executa:
 - validacao do Docker Compose;
 - build e publicacao das imagens no GitHub Container Registry com tags `${GITHUB_SHA}` e `latest`;
 - renderizacao dos manifests Kubernetes com `${GITHUB_SHA}`;
-- deploy em Kubernetes usando o secret `KUBE_CONFIG`.
+- deploy em Kubernetes quando a variavel `ENABLE_K8S_DEPLOY=true` estiver configurada e o secret `KUBE_CONFIG` existir.
 
 ## Case Oficial Comparado
 

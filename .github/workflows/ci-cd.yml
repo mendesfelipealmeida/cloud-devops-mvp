@@ -1,4 +1,4 @@
-name: CI/CD Pedidos Veloz
+﻿name: CI/CD Pedidos Veloz
 
 on:
   push:
@@ -76,7 +76,7 @@ jobs:
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: publish
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && vars.ENABLE_K8S_DEPLOY == 'true'
     environment: production
     steps:
       - name: Checkout

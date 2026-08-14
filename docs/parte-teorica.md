@@ -1,4 +1,4 @@
-# Parte Teorica - Pedidos Veloz
+﻿# Parte Teorica - Pedidos Veloz
 
 ## 1. Microservicos e DevOps cloud-native
 
@@ -22,7 +22,7 @@ Readiness probe evita que um pod receba trafego antes de estar pronto. Liveness 
 
 ## 4. CI/CD em sistemas distribuidos
 
-Em microsservicos, CI/CD precisa validar codigo e infraestrutura antes do deploy. O pipeline criado no GitHub Actions instala dependencias, executa ESLint, executa testes em Node.js 20, valida o Compose, constroi imagens e publica no GitHub Container Registry. Em seguida, o job de deploy renderiza os manifests Kubernetes com a tag `${GITHUB_SHA}` e aplica o resultado no cluster usando um `KUBE_CONFIG` armazenado como secret.
+Em microsservicos, CI/CD precisa validar codigo e infraestrutura antes do deploy. O pipeline criado no GitHub Actions instala dependencias, executa ESLint, executa testes em Node.js 20, valida o Compose, constroi imagens e publica no GitHub Container Registry. Em seguida, quando `ENABLE_K8S_DEPLOY=true` e `KUBE_CONFIG` esta configurado, o job de deploy renderiza os manifests Kubernetes com a tag `${GITHUB_SHA}` e aplica o resultado no cluster.
 
 Essa abordagem melhora governanca porque o deploy deixa de ser manual e passa a ter etapas verificaveis. Tambem reduz falhas comuns, como codigo fora do padrao, imagem sem tag, configuracao quebrada ou falta de teste antes de publicar. O uso de `${GITHUB_SHA}` evita que o Kubernetes continue usando uma tag antiga como `1.0.0` depois que uma nova imagem foi criada.
 

@@ -1,4 +1,4 @@
-# Relatorio Pratico - Pedidos Veloz
+﻿# Relatorio Pratico - Pedidos Veloz
 
 ## 1. Visao geral do MVP
 
@@ -61,14 +61,14 @@ O workflow `.github/workflows/ci-cd.yml` possui tres jobs:
 
 - `test`: checkout, Node.js 20, `npm ci`, `npm run lint`, `npm test` e `docker compose config`.
 - `publish`: build e push das imagens para GHCR com `${GITHUB_SHA}` e `latest`.
-- `deploy`: configura kubeconfig, renderiza manifests com `${GITHUB_SHA}` e aplica `rendered-k8s/`.
+- `deploy`: roda apenas quando `ENABLE_K8S_DEPLOY=true`; configura kubeconfig, renderiza manifests com `${GITHUB_SHA}` e aplica `rendered-k8s/`.
 
 Secrets usados:
 
 - `GITHUB_TOKEN`: publicacao no GHCR.
 - `KUBE_CONFIG`: acesso ao cluster Kubernetes.
 
-Esse fluxo impede deploy sem lint, sem teste ou sem validacao do Compose. Tambem garante coerencia entre build e deploy, porque a mesma tag `${GITHUB_SHA}` criada no job `publish` e usada nos Deployments Kubernetes.
+Esse fluxo impede deploy sem lint, sem teste ou sem validacao do Compose. Tambem garante coerencia entre build e deploy, porque a mesma tag `${GITHUB_SHA}` criada no job `publish` e usada nos Deployments Kubernetes. Como o ambiente academico pode nao ter cluster real, o deploy de producao fica condicionado a `ENABLE_K8S_DEPLOY=true` e ao secret `KUBE_CONFIG`; sem isso, a esteira valida, testa, builda e publica imagens sem falhar uma implantacao inexistente.
 
 ## 6. Observabilidade
 
